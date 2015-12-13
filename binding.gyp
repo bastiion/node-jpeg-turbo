@@ -3,6 +3,7 @@
     {
       'target_name': '<(module_name)',
       'sources': [
+        'src/compress.cc',
         'src/decompress.cc',
         'src/exports.cc',
       ],
