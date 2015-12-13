@@ -1,3 +1,5 @@
+#ifndef EXPORTS_H
+#define EXPORTS_H 
 #include <nan.h>
 #include <turbojpeg.h>
 
@@ -17,4 +19,4 @@ enum {
 
 NAN_METHOD(DecompressSync);
 NAN_METHOD(CompressSync);
-NAN_METHOD(ScaleFactors);
+#endif

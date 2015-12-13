@@ -3,9 +3,9 @@
     {
       'target_name': '<(module_name)',
       'sources': [
+        'src/utils.cc',
         'src/compress.cc',
         'src/decompress.cc',
-        'src/utils.cc',
         'src/exports.cc',
       ],
       'include_dirs': [

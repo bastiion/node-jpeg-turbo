@@ -1,12 +1,13 @@
 #include "exports.h"
+#include "utils.h"
 
 NAN_MODULE_INIT(InitAll) {
+  Nan::Set(target, Nan::New("scaleFactors").ToLocalChecked(),
+    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(ScaleFactors)).ToLocalChecked());
   Nan::Set(target, Nan::New("compressSync").ToLocalChecked(),
     Nan::GetFunction(Nan::New<v8::FunctionTemplate>(CompressSync)).ToLocalChecked());
   Nan::Set(target, Nan::New("decompressSync").ToLocalChecked(),
     Nan::GetFunction(Nan::New<v8::FunctionTemplate>(DecompressSync)).ToLocalChecked());
-  Nan::Set(target, Nan::New("scaleFactors").ToLocalChecked(),
-    Nan::GetFunction(Nan::New<v8::FunctionTemplate>(ScaleFactors)).ToLocalChecked());
   Nan::Set(target, Nan::New("FORMAT_RGB").ToLocalChecked(), Nan::New(FORMAT_RGB));
   Nan::Set(target, Nan::New("FORMAT_BGR").ToLocalChecked(), Nan::New(FORMAT_BGR));
   Nan::Set(target, Nan::New("FORMAT_RGBX").ToLocalChecked(), Nan::New(FORMAT_RGBX));
