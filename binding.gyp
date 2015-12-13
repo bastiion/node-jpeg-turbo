@@ -5,6 +5,7 @@
       'sources': [
         'src/compress.cc',
         'src/decompress.cc',
+        'src/utils.cc',
         'src/exports.cc',
       ],
       'include_dirs': [

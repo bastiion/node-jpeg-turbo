@@ -17,3 +17,4 @@ enum {
 
 NAN_METHOD(DecompressSync);
 NAN_METHOD(CompressSync);
+NAN_METHOD(ScaleFactors);
