@@ -1,5 +1,7 @@
 #include "exports.h"
 
+#include <iostream>
+
 // Unfortunately Travis still uses Ubuntu 12.04, and their libjpeg-turbo is
 // super old (1.2.0). We still want to build there, but opt in to the new
 // flag when possible.
@@ -9,7 +11,7 @@
 
 NAN_METHOD(DecompressSync) {
   int err;
-  int width, height, jpegSubsamp;
+  int width, height, scaleWidth, scaleHeight, jpegSubsamp;
   unsigned char* srcData;
   unsigned char* dstData;
   uint32_t srcLength, dstLength;
@@ -35,6 +37,12 @@ NAN_METHOD(DecompressSync) {
 
   uint32_t format =
     options->Get(Nan::New("format").ToLocalChecked())->Uint32Value();
+
+  uint32_t scaleNum =
+      options->Get(Nan::New("scalenum").ToLocalChecked())->Uint32Value();
+ 
+  int num;
+  tjscalingfactor* factors = tjGetScalingFactors(&num);
 
   switch (format) {
   case FORMAT_GRAY:
@@ -73,6 +81,16 @@ NAN_METHOD(DecompressSync) {
   err = tjDecompressHeader2(
     dh, srcData, srcLength, &width, &height, &jpegSubsamp);
 
+  if(scaleNum < num) {
+    scaleWidth = TJSCALED(width, factors[scaleNum]);
+    scaleHeight = TJSCALED(height, factors[scaleNum]);
+  } else {
+    scaleWidth = width;
+    scaleHeight = height;
+  }
+
+  std::cout << "scaleWidth: " << scaleWidth << " scaleNum: " << scaleNum << std::endl; 
+
   if (err != 0) {
     tjErr = tjGetErrorStr();
     tjDestroy(dh);
@@ -93,7 +111,7 @@ NAN_METHOD(DecompressSync) {
   dstData = (unsigned char*) node::Buffer::Data(dstObject);
 
   err = tjDecompress2(
-    dh, srcData, srcLength, dstData, width, 0, height, format, TJFLAG_FASTDCT);
+    dh, srcData, srcLength, dstData, scaleWidth, 0, 0, format, TJFLAG_FASTDCT);
 
   if (err != 0) {
     tjErr = tjGetErrorStr();
@@ -108,8 +126,8 @@ NAN_METHOD(DecompressSync) {
 
   v8::Local<v8::Object> obj = Nan::New<v8::Object>();
   obj->Set(Nan::New("data").ToLocalChecked(), dstObject);
-  obj->Set(Nan::New("width").ToLocalChecked(), Nan::New(width));
-  obj->Set(Nan::New("height").ToLocalChecked(), Nan::New(height));
+  obj->Set(Nan::New("width").ToLocalChecked(), Nan::New(scaleWidth));
+  obj->Set(Nan::New("height").ToLocalChecked(), Nan::New(scaleHeight));
   obj->Set(Nan::New("size").ToLocalChecked(), Nan::New(dstLength));
   obj->Set(Nan::New("bpp").ToLocalChecked(), Nan::New(bpp));
 
