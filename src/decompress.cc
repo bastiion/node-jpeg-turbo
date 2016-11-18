@@ -81,12 +81,15 @@ NAN_METHOD(DecompressSync) {
   err = tjDecompressHeader2(
     dh, srcData, srcLength, &width, &height, &jpegSubsamp);
 
+  scaleWidth = width;
+  scaleHeight = height;
   if(scaleNum < num) {
     scaleWidth = TJSCALED(width, factors[scaleNum]);
     scaleHeight = TJSCALED(height, factors[scaleNum]);
-  } else {
-    scaleWidth = width;
-    scaleHeight = height;
+    if(scaleWidth > width) {
+      scaleWidth = width;
+      scaleHeight = height;
+    }
   }
 
   std::cout << "scaleWidth: " << scaleWidth << " scaleNum: " << scaleNum << std::endl; 
